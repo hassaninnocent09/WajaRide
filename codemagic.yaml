@@ -1,42 +1,76 @@
 workflows:
   android-debug:
     name: WajaRide Android Debug
-    instance_type: linux_x2
     max_build_duration: 60
+    instance_type: mac_mini_m2
+
     environment:
       node: latest
+
     scripts:
-      - name: Install dependencies
+      - name: Install npm dependencies
         script: npm ci
-      - name: Sync Capacitor Android
-        script: npx cap sync android
+
+      - name: Verify web assets
+        script: |
+          if [ ! -f "$CM_BUILD_DIR/dist/index.html" ]; then
+            echo "ERROR: dist/index.html was not found."
+            echo "Make sure the dist folder is committed to GitHub."
+            exit 1
+          fi
+
+          echo "Web assets found:"
+          ls -la "$CM_BUILD_DIR/dist"
+
       - name: Set Android SDK location
         script: |
           echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+
+      - name: Sync Capacitor Android
+        script: npx cap sync android
+
       - name: Build Android debug APK
         script: |
-          cd android
+          cd "$CM_BUILD_DIR/android"
           ./gradlew assembleDebug
+
     artifacts:
       - android/app/build/outputs/apk/debug/*.apk
 
+
   ios-debug:
     name: WajaRide iOS Debug
-    instance_type: mac_mini_m2
     max_build_duration: 60
+    instance_type: mac_mini_m2
+
     environment:
       node: latest
       xcode: latest
       cocoapods: default
+
     scripts:
-      - name: Install dependencies
+      - name: Install npm dependencies
         script: npm ci
-      - name: Sync Capacitor iOS
-        script: npx cap sync ios
+
+      - name: Verify web assets
+        script: |
+          if [ ! -f "$CM_BUILD_DIR/dist/index.html" ]; then
+            echo "ERROR: dist/index.html was not found."
+            echo "Make sure the dist folder is committed to GitHub."
+            exit 1
+          fi
+
+          echo "Web assets found:"
+          ls -la "$CM_BUILD_DIR/dist"
+
       - name: Install CocoaPods dependencies
         script: |
-          cd ios/App
+          cd "$CM_BUILD_DIR/ios/App"
           pod install
+
+      - name: Sync Capacitor iOS
+        script: npx cap sync ios
+
       - name: Build iOS without code signing
         script: |
           xcodebuild \
@@ -46,6 +80,7 @@ workflows:
             -destination 'generic/platform=iOS' \
             CODE_SIGNING_ALLOWED=NO \
             build
+
     artifacts:
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
       - /tmp/xcodebuild_logs/*.log
