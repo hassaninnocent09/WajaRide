@@ -1,66 +1,51 @@
 workflows:
-  android:
-    name: WajaRide Android
+  android-debug:
+    name: WajaRide Android Debug
     instance_type: linux_x2
     max_build_duration: 60
-
     environment:
-      android_signing:
-        - wajaride_keystore
-
+      node: latest
     scripts:
       - name: Install dependencies
-        script: npm install
-
-      - name: Sync Capacitor
+        script: npm ci
+      - name: Sync Capacitor Android
         script: npx cap sync android
-
       - name: Set Android SDK location
-        script: echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
-
-      - name: Build Android
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+      - name: Build Android debug APK
         script: |
           cd android
-          ./gradlew assembleRelease
-
+          ./gradlew assembleDebug
     artifacts:
-      - android/app/build/outputs/**/*.apk
-      - android/app/build/outputs/**/*.aab
+      - android/app/build/outputs/apk/debug/*.apk
 
-  ios:
-    name: WajaRide iOS
+  ios-debug:
+    name: WajaRide iOS Debug
     instance_type: mac_mini_m2
     max_build_duration: 60
-
     environment:
-      ios_signing:
-        distribution_type: development
-        bundle_identifier: com.wajaride.app
-
+      node: latest
+      xcode: latest
+      cocoapods: default
     scripts:
       - name: Install dependencies
-        script: npm install
-
-      - name: Sync Capacitor
+        script: npm ci
+      - name: Sync Capacitor iOS
         script: npx cap sync ios
-
       - name: Install CocoaPods dependencies
         script: |
           cd ios/App
           pod install
-
-      - name: Build iOS
+      - name: Build iOS without code signing
         script: |
-          cd ios/App
           xcodebuild \
-            -workspace App.xcworkspace \
+            -workspace "$CM_BUILD_DIR/ios/App/App.xcworkspace" \
             -scheme App \
             -configuration Debug \
-            -sdk iphoneos \
-            -archivePath "$CM_BUILD_DIR/build/App.xcarchive" \
-            archive \
-            CODE_SIGNING_ALLOWED=NO
-
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
     artifacts:
-      - build/**/*.xcarchive
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
       - /tmp/xcodebuild_logs/*.log
