@@ -42,10 +42,8 @@ html, body {
 
 .app {
   min-height: 100dvh;
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-
-  box-sizing: border-box;
+  padding-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  padding-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
 }
 
 #app {
@@ -617,7 +615,7 @@ html, body {
 </style>
 </head>
 <body>
-<div id="app">
+<div class="app" id="app">
 
   <!-- MOBILE SIDEBAR OVERLAY -->
   <div
