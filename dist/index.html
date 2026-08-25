@@ -1073,19 +1073,24 @@ html, body {
 
 </div>
 
-<!-- CAPACITOR STATUSBAR SETUP SCRIPT -->
-<script type="module">
-  try {
-    const { StatusBar, Style } = await import('@capacitor/status-bar');
-    await StatusBar.setStyle({ style: Style.Light });
-    await StatusBar.setBackgroundColor({ color: '#0F1C13' });
-  } catch (err) {
-    if (window.Capacitor?.Plugins?.StatusBar) {
-      const { StatusBar } = window.Capacitor.Plugins;
-      await StatusBar.setStyle({ style: 'LIGHT' });
-      await StatusBar.setBackgroundColor({ color: '#0F1C13' });
+<script src="capacitor.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const { StatusBar, Style } = Capacitor.Plugins;
+
+      await StatusBar.setStyle({
+        style: Style.Light
+      });
+
+      await StatusBar.setBackgroundColor({
+        color: '#0F1C13'
+      });
+    } catch (error) {
+      console.error('Status bar error:', error);
     }
-  }
+  });
 </script>
 
 <script>
