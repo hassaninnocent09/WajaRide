@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Brainbox.</title>
-<meta name="theme-color" content="#0F1C13">
+<meta name="theme-color" content="#F5F7F5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1917" media="(prefers-color-scheme: dark)">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&display=swap" rel="stylesheet">
@@ -1073,22 +1074,29 @@ html, body {
 
 </div>
 
-<script src="capacitor.js"></script>
-
+<!-- CAPACITOR STATUS BAR INITIALIZATION -->
 <script>
   document.addEventListener('DOMContentLoaded', async () => {
     try {
-      const { StatusBar, Style } = Capacitor.Plugins;
+      if (!window.Capacitor) {
+        console.warn('Capacitor is not available');
+        return;
+      }
+
+      const { StatusBar } = window.Capacitor.Plugins || {};
+
+      if (!StatusBar) {
+        console.warn('StatusBar plugin is not available');
+        return;
+      }
 
       await StatusBar.setStyle({
-        style: Style.Light
+        style: 'LIGHT'
       });
 
-      await StatusBar.setBackgroundColor({
-        color: '#0F1C13'
-      });
+      console.log('Brainbox Status Bar ready');
     } catch (error) {
-      console.error('Status bar error:', error);
+      console.error('StatusBar:', error);
     }
   });
 </script>
