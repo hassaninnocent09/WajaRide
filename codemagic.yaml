@@ -16,9 +16,8 @@ workflows:
         script: |
           test -f "$CM_BUILD_DIR/dist/index.html"
 
-      - name: Generate app icons
-        script: |
-          npx @capacitor/assets generate --iconPath resources/icon.png
+      - name: Generate Android app icons
+        script: npx @capacitor/assets generate --android
 
       - name: Set Android SDK location
         script: |
