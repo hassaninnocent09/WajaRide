@@ -26,6 +26,23 @@ workflows:
       - name: Sync Capacitor Android
         script: npx cap sync android
 
+      - name: Set Android navigation bar color
+        script: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("android/app/src/main/res/values/styles.xml")
+
+          text = path.read_text()
+
+          item = '    <item name="android:navigationBarColor">#0F1C13</item>'
+
+          if "android:navigationBarColor" not in text:
+              text = text.replace("</resources>", f"{item}\n</resources>")
+
+          path.write_text(text)
+          PY
+
       - name: Build Android debug APK
         script: |
           cd "$CM_BUILD_DIR/android"
