@@ -1,9 +1,5 @@
 {
   "appId": "com.wajaride.app",
   "appName": "WajaRide",
-  "webDir": "dist",
-  "server": {
-    "url": "http://10.127.107.184:5173/",
-    "cleartext": true
-  }
+  "webDir": "dist"
 }

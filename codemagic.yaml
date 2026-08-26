@@ -16,6 +16,10 @@ workflows:
         script: |
           test -f "$CM_BUILD_DIR/dist/index.html"
 
+      - name: Generate app icons
+        script: |
+          npx @capacitor/assets generate --iconPath resources/icon.png
+
       - name: Set Android SDK location
         script: |
           echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
