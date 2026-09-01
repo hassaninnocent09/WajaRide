@@ -1,5 +1,13 @@
 {
   "appId": "com.wajaride.app",
   "appName": "WajaRide",
-  "webDir": "dist"
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": true,
+      "backgroundColor": "#FBFBFB",
+      "androidSplashResourceName": "splash",
+      "showSpinner": false
+    }
+  }
 }
